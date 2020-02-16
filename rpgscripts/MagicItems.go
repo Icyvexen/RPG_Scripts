@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //MagicItem - possesses Type (string) and Text (string).
@@ -12,8 +13,8 @@ type MagicItem struct {
 	Text string
 }
 
-//NewMagicItem - taking type and text of item, returns pointer to the MagicItem
-func NewMagicItem(iT string, text string) *MagicItem {
+//newMagicItem - taking type and text of item, returns pointer to the MagicItem
+func newMagicItem(iT string, text string) *MagicItem {
 	mi := MagicItem{iT, text}
 	return &mi
 }
@@ -26,12 +27,6 @@ var (
 		2: "Wand",
 		3: "Weapon",
 		4: "Ring",
-	}
-	magicItemTypesNotRing = map[int]string{
-		0: "Potion",
-		1: "Armor",
-		2: "Wand",
-		3: "Weapon",
 	}
 
 	potionEffects = map[int]string{
@@ -100,18 +95,36 @@ var (
 	}
 )
 
+//Declare the RNG for this section.
+var (
+	rs  = rand.NewSource(time.Now().UnixNano())
+	rng = rand.New(rs)
+)
+
 /*
 CreateMagicItem - generates a magic item and returns the text description as a MagicItem.
 */
-func CreateMagicItem() MagicItem {
-	iType, iText := generateItemType(len(magicItemTypes))
-	item := NewMagicItem(iType, iText)
+func CreateMagicItem(params ...int64) MagicItem {
+	var iType, iText string
+	if len(params) > 0 {
+		seedRNG(params[0])
+		iType, iText = generateItemType(len(magicItemTypes))
+	} else {
+		iType, iText = generateItemType(len(magicItemTypes))
+	}
+	item := newMagicItem(iType, iText)
 	return *item
 
 }
 
+func seedRNG(seed int64) {
+	rs = rand.NewSource(seed)
+	rng = rand.New(rs)
+
+}
+
 func generateItemType(n int) (string, string) {
-	itemRandom := rand.Intn(n)
+	itemRandom := rng.Int63n(5)
 	var iType, text string
 	switch itemRandom {
 	case 0:
@@ -134,7 +147,7 @@ func generateItemType(n int) (string, string) {
 }
 
 func generatePotion() string {
-	randomEffect := potionEffects[rand.Intn(len(potionEffects))]
+	randomEffect := potionEffects[rng.Intn(len(potionEffects))]
 	return randomEffect
 }
 
@@ -155,11 +168,11 @@ func generateWand() string {
 func generateWeapon() string {
 	wt := weaponTypes[rand.Intn(len(weaponTypes))]
 	mod := rand.Intn(4) + 1
-	return itemDescriptorType(wt, " ", strconv.Itoa(mod))
+	return itemDescriptorType(wt, " +", strconv.Itoa(mod))
 }
 
 func generateRing() string {
-	mit := magicItemTypesNotRing
+	mit := magicItemTypes
 	comp := mit[rand.Intn(len(mit))]
 	mod := rand.Intn(4) + 1
 	switch comp {
@@ -175,10 +188,9 @@ func generateRing() string {
 		return ret
 	case "Potion":
 		return generatePotion()
-	default:
-		return "NOT YET IMPLEMENTED TYPE!"
+		// This section is commented out, as at this moment all types are covered that are implemented.
 	}
-
+	return generateRing()
 }
 
 func itemDescriptorType(str ...string) string {
