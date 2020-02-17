@@ -1,7 +1,6 @@
 package rpgscripts
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -42,7 +41,6 @@ func TestCreateMagicItem(t *testing.T) {
 						if !reflect.DeepEqual(got, tt.want) {
 							got = CreateMagicItem()
 						} else {
-							fmt.Println("Got the item... NEXT TEST!")
 							break
 						}
 					}

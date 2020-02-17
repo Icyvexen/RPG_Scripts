@@ -188,7 +188,6 @@ func generateRing() string {
 		return ret
 	case "Potion":
 		return generatePotion()
-		// This section is commented out, as at this moment all types are covered that are implemented.
 	}
 	return generateRing()
 }
