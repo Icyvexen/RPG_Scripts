@@ -1,4 +1,4 @@
-package rpgscripts
+package items
 
 import (
 	"math/rand"
