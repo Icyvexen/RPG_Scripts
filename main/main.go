@@ -16,7 +16,8 @@ const menu string = `
 Options:
 1. Magic Items
 2. Ship Names
-3. Exit
+3. Book Names
+4. Exit
 
 Enter number for desired option... `
 
@@ -38,6 +39,8 @@ func main() {
 			}
 		case 2:
 			generate("ship names", names.NewShipName)
+		case 3:
+			generate("books", names.NewBook)
 		default:
 			fmt.Println("Closing script...")
 			os.Exit(0)
