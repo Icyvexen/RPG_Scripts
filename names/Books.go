@@ -2,8 +2,9 @@ package names
 
 import (
 	"math/rand"
-	"strings"
 	"time"
+
+	"github.com/Icyvexen/rpgscripts/helpers"
 )
 
 type dictionary map[int]string
@@ -111,7 +112,7 @@ var (
 //NewBook - returns a ship name
 func NewBook(params ...int64) string {
 	var rs rand.Source
-	var sb strings.Builder
+	var sb string
 	if len(params) > 0 {
 		rs = rand.NewSource(params[0])
 	} else {
@@ -119,89 +120,39 @@ func NewBook(params ...int64) string {
 	}
 	rng := rand.New(rs)
 
-	comp := rand.Intn(11)
-	switch comp {
+	choice := rand.Intn(11)
+
+	cov := cover.String(rng)
+	page := pageComposition.String(rng)
+	view := pov.String(rng)
+	topic := bookTopic.String(rng)
+
+	switch choice {
 	case 0: //cover pages
-		sb.WriteString("A book bound by ")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(", with ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(" pages.")
+		sb = helpers.StringCombiner("A book bound by ", cov, ", with ", page, " pages.")
 	case 1: //cover pov
-		sb.WriteString("A book with ")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(" binding, as told from a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective.")
+		sb = helpers.StringCombiner("A book with ", cov, " binding, as told from a(n) ", view, " perspective.")
 	case 2: //cover topic
-		sb.WriteString("A book is here with ")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(" binding about ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("A book is here with ", cov, " binding about ", topic, ".")
 	case 3: //pages pov
-		sb.WriteString("A book with ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(" pages, from a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective.")
+		sb = helpers.StringCombiner("A book with ", page, "pages, from a(n) ", view, " perspective.")
 	case 4: //pages topic
-		sb.WriteString("A book with ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(" pages about ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("A book with ", page, " pages about ", topic, ".")
 	case 5: //pov topic
-		sb.WriteString("A book from a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective for ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("A book from a(n) ", view, " perspective for ", topic, ".")
 	case 6: //cov pages pov
-		sb.WriteString("Here is a book in")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(" binding, pages made of ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(", from a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective.")
+		sb = helpers.StringCombiner("Here is a book in ", cov, " binding, pages made of ", page, ", from a(n) ", view, " perspective.")
 	case 7: //cov pages topic
-		sb.WriteString("A book with ")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(" binding and set on ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(" pages, on the topic of ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("A book with ", cov, " binding and set on ", page, " pages, on the topic of ", topic, ".")
 	case 8: //cov pov topic
-		sb.WriteString("This book has ")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(" binding from a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective, on the topic of ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("This book has ", cov, " binding from a(n) ", view, " perspective, on the topic of ", topic, ".")
 	case 9: //pages pov topic
-		sb.WriteString("A book with ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(" pages from a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective, detailing thoughts on ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("A book with ", page, " pages from a(n) ", view, " perspective, detailing thoughts on ", topic, ".")
 	case 10: //all
-		sb.WriteString("A book with ")
-		sb.WriteString(cover.String(rng))
-		sb.WriteString(" binding, pages made of ")
-		sb.WriteString(pageComposition.String(rng))
-		sb.WriteString(", over a(n) ")
-		sb.WriteString(pov.String(rng))
-		sb.WriteString(" perspective on the subjects of ")
-		sb.WriteString(bookTopic.String(rng))
-		sb.WriteString(".")
+		sb = helpers.StringCombiner("A book with ", cov, " binding, pages made of ", page, ", over a(n) ", view, " perspective on the subjects of ", topic, ".")
 	}
 
-	ret := sb.String()
+	ret := sb
 	time.Sleep(time.Microsecond)
 	return ret
 }
