@@ -14,9 +14,14 @@ type MagicItem struct {
 }
 
 //newMagicItem - taking type and text of item, returns pointer to the MagicItem
-func newMagicItem(iT string, text string) *MagicItem {
+func newMagicItem(iT string, text string) Item {
 	mi := MagicItem{iT, text}
-	return &mi
+	return mi
+}
+
+//Describe - return
+func (mi MagicItem) Describe() string {
+	return mi.Text
 }
 
 //Declare the "constant" maps up here for cleaner code
@@ -27,26 +32,6 @@ var (
 		2: "Wand",
 		3: "Weapon",
 		4: "Ring",
-	}
-
-	potionEffects = map[int]string{
-		0:  "Strength",
-		1:  "Healing",
-		2:  "Speed",
-		3:  "Regeneration",
-		4:  "Protection from Undead",
-		5:  "Protection from Magic",
-		6:  "Protection from Fire",
-		7:  "Protection from Heat",
-		8:  "Protection from Cold",
-		9:  "Invisibility",
-		10: "Levitation",
-		11: "Telekenisis",
-		12: "Speed",
-		13: "Control Plants",
-		14: "Control Humans",
-		15: "Control Animals",
-		16: "Control Undead",
 	}
 
 	armorTypes = map[int]string{
@@ -104,16 +89,16 @@ var (
 /*
 CreateMagicItem - generates a magic item and returns the text description as a MagicItem.
 */
-func CreateMagicItem(params ...int64) MagicItem {
+func CreateMagicItem(params ...int64) Item {
 	var iType, iText string
 	if len(params) > 0 {
 		seedRNG(params[0])
-		iType, iText = generateItemType(len(magicItemTypes))
+		iType, iText = generateItemType(len(magicItemTypes), params...)
 	} else {
-		iType, iText = generateItemType(len(magicItemTypes))
+		iType, iText = generateItemType(len(magicItemTypes), params...)
 	}
 	item := newMagicItem(iType, iText)
-	return *item
+	return item
 
 }
 
@@ -123,13 +108,17 @@ func seedRNG(seed int64) {
 
 }
 
-func generateItemType(n int) (string, string) {
+func generateItemType(n int, params ...int64) (string, string) {
 	itemRandom := rng.Int63n(5)
 	var iType, text string
 	switch itemRandom {
 	case 0:
 		iType = "potion"
-		text = generatePotion()
+		if len(params) > 0 {
+			text = Potion.Generate(params...).Describe()
+		} else {
+			text = Potion.Generate().Describe()
+		}
 	case 1:
 		iType = "armor"
 		text = generateArmor()
@@ -144,11 +133,6 @@ func generateItemType(n int) (string, string) {
 		text = generateRing()
 	}
 	return iType, text
-}
-
-func generatePotion() string {
-	randomEffect := potionEffects[rng.Intn(len(potionEffects))]
-	return randomEffect
 }
 
 func generateArmor() string {
@@ -171,7 +155,7 @@ func generateWeapon() string {
 	return itemDescriptorType(wt, " +", strconv.Itoa(mod))
 }
 
-func generateRing() string {
+func generateRing(params ...int64) string {
 	mit := magicItemTypes
 	comp := mit[rand.Intn(len(mit))]
 	mod := rand.Intn(4) + 1
@@ -187,7 +171,7 @@ func generateRing() string {
 		ret += strconv.Itoa(mod)
 		return ret
 	case "Potion":
-		return generatePotion()
+		return Potion.Generate().Describe()
 	}
 	return generateRing()
 }
