@@ -1,14 +1,13 @@
 package items
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"math/rand"
 
 	"github.com/Icyvexen/rpgscripts/helpers"
 )
 
-//Potion - has Container, Color, Liquid, Taste, and Effect - all
+//Potion - has Container, Color, Liquid, Taste, and Effect - all strings
 type Potion struct {
 	Container string
 	Color     string //TODO: make this color string? Or at least an "enum"?
@@ -19,11 +18,9 @@ type Potion struct {
 
 //Describe -- Item Interface - returns a JSON-ized string of the
 func (p Potion) Describe() string {
-	ret, err := json.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
-	return bytes.NewBuffer(ret).String()
+	ret := fmt.Sprintf("%+v", p)
+
+	return string(ret)
 }
 
 //Declare the different parts of a potion to choose from
@@ -141,13 +138,10 @@ var (
 )
 
 //Generate - create and return a potion
-func (p Potion) Generate(pot *Potion, params ...int64) *Potion {
+func (p Potion) Generate(params helpers.Parameters) Potion {
 	var rng *rand.Rand
-	if params == nil {
-		rng = helpers.SetupRNG()
-	} else {
-		rng = helpers.SetupRNG(params[0])
-	}
+	rng = helpers.SetupRNG(params)
+	var pot Potion
 	pot.Color = potionColor[rng.Intn(len(potionColor)+1)]
 	pot.Container = potionContainer[rng.Intn(len(potionContainer)+1)]
 	pot.Liquid = potionLiquid[rng.Intn(len(potionLiquid)+1)]

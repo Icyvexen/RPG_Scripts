@@ -11,8 +11,9 @@ func TestNewShipName(t *testing.T) {
 
 	//This seed is defined as such for consistent testing purposes
 	var seed int64 = 7868455476845
-	seeded := []int64{seed}
-	notSeeded := []int64{}
+	var seeded helpers.Parameters
+	seeded = seeded.NewParameters(seed)
+	notSeeded := helpers.Parameters{}
 
 	tests := []helpers.TCStrings{
 		//NOTE: to validate the tests more quickly, check if 1 word from each section is present

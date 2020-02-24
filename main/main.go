@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Icyvexen/rpgscripts/helpers"
 	"github.com/Icyvexen/rpgscripts/items"
 	"github.com/Icyvexen/rpgscripts/names"
 )
@@ -32,7 +33,7 @@ func main() {
 			fmt.Println("How many magic items to generate?")
 			num := inputNum()
 			for num > 0 {
-				gen := items.CreateMagicItem()
+				gen := items.CreateMagicItem(helpers.Parameters{})
 				fmt.Println(gen)
 				time.Sleep(time.Microsecond) //give the RNG call time to use nanosecond seed
 				num--
@@ -58,12 +59,13 @@ func input() string {
 	return strings.Replace(in, "\r\n", "", -1)
 }
 
-func generate(toGen string, fn func(...int64) string) {
+func generate(toGen string, fn func(helpers.Parameters) string) {
 	fmt.Println("How many", toGen, "to generate?")
 	num := inputNum()
 	for num > 0 {
+		par := helpers.Parameters{}
 		gen := fn
-		ret := gen()
+		ret := gen(par)
 		fmt.Println(ret)
 		time.Sleep(time.Microsecond) //give the RNG call time to use nanosecond seed
 		num--

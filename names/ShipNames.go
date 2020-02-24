@@ -10,6 +10,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/Icyvexen/rpgscripts/helpers"
 )
 
 //List of categories
@@ -108,11 +110,12 @@ var (
 )
 
 //NewShipName - returns a ship name
-func NewShipName(params ...int64) string {
+func NewShipName(params helpers.Parameters) string {
 	var rs rand.Source
 	var sb strings.Builder
-	if len(params) > 0 {
-		rs = rand.NewSource(params[0])
+	s := params.Seed()
+	if s > 0 {
+		rs = rand.NewSource(s)
 	} else {
 		rs = rand.NewSource(time.Now().UnixNano())
 	}

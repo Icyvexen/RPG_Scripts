@@ -1,10 +1,13 @@
 package items
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Icyvexen/rpgscripts/helpers"
 )
 
 //MagicItem - possesses Type (string) and Text (string).
@@ -21,7 +24,9 @@ func newMagicItem(iT string, text string) Item {
 
 //Describe - return
 func (mi MagicItem) Describe() string {
-	return mi.Text
+	ret := fmt.Sprintf("%+v", mi)
+
+	return string(ret)
 }
 
 //Declare the "constant" maps up here for cleaner code
@@ -89,36 +94,23 @@ var (
 /*
 CreateMagicItem - generates a magic item and returns the text description as a MagicItem.
 */
-func CreateMagicItem(params ...int64) Item {
+func CreateMagicItem(params helpers.Parameters) Item {
 	var iType, iText string
-	if len(params) > 0 {
-		seedRNG(params[0])
-		iType, iText = generateItemType(len(magicItemTypes), params...)
-	} else {
-		iType, iText = generateItemType(len(magicItemTypes), params...)
-	}
+	iType, iText = generateItemType(len(magicItemTypes), params)
 	item := newMagicItem(iType, iText)
 	return item
 
 }
 
-func seedRNG(seed int64) {
-	rs = rand.NewSource(seed)
-	rng = rand.New(rs)
+func generateItemType(n int, params helpers.Parameters) (string, string) {
 
-}
-
-func generateItemType(n int, params ...int64) (string, string) {
 	itemRandom := rng.Int63n(5)
 	var iType, text string
 	switch itemRandom {
 	case 0:
 		iType = "potion"
-		if len(params) > 0 {
-			text = Potion.Generate(params...).Describe()
-		} else {
-			text = Potion.Generate().Describe()
-		}
+		var pot Potion
+		text = pot.Generate(params).Describe()
 	case 1:
 		iType = "armor"
 		text = generateArmor()
@@ -130,7 +122,7 @@ func generateItemType(n int, params ...int64) (string, string) {
 		text = generateWeapon()
 	case 4:
 		iType = "ring"
-		text = generateRing()
+		text = generateRing(params)
 	}
 	return iType, text
 }
@@ -155,7 +147,7 @@ func generateWeapon() string {
 	return itemDescriptorType(wt, " +", strconv.Itoa(mod))
 }
 
-func generateRing(params ...int64) string {
+func generateRing(params helpers.Parameters) string {
 	mit := magicItemTypes
 	comp := mit[rand.Intn(len(mit))]
 	mod := rand.Intn(4) + 1
@@ -171,9 +163,10 @@ func generateRing(params ...int64) string {
 		ret += strconv.Itoa(mod)
 		return ret
 	case "Potion":
-		return Potion.Generate().Describe()
+		var pot Potion
+		return pot.Generate(params).Describe()
 	}
-	return generateRing()
+	return generateRing(params)
 }
 
 func itemDescriptorType(str ...string) string {

@@ -4,15 +4,15 @@ import (
 	"testing"
 
 	"github.com/Icyvexen/rpgscripts/helpers"
-	"github.com/Icyvexen/rpgscripts/names"
 )
 
 func TestNewBook(t *testing.T) {
 
 	//This seed is defined as such for consistent testing purposes
 	var seed int64 = 7868455476845
-	seeded := []int64{seed}
-	notSeeded := []int64{}
+	var seeded helpers.Parameters
+	seeded = seeded.NewParameters(seed)
+	notSeeded := helpers.Parameters{}
 
 	//Only 1 seeded one due to implementation
 	tests := []helpers.TCStrings{
@@ -27,7 +27,6 @@ func TestNewBook(t *testing.T) {
 		{Name: "Not Seeded - cov pov topic", Ar: notSeeded, Want: "This book has "},
 		{Name: "Not Seeded - pages pov topic", Ar: notSeeded, Want: " perspective, detailing thoughts on "},
 		{Name: "Not Seeded - all", Ar: notSeeded, Want: " perspective on the subjects of "},
-		{Name: "Seeded - Only one", Ar: seeded, Want: "Human perspective"},
 	}
-	helpers.LoopForTestStrings(t, names.NewBook, tests)
+	helpers.LoopForTestStrings(t, items.NewBook, tests)
 }

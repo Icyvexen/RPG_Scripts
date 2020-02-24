@@ -110,11 +110,12 @@ var (
 )
 
 //NewBook - returns a ship name
-func NewBook(params ...int64) string {
+func NewBook(params helpers.Parameters) string {
 	var rs rand.Source
 	var sb string
-	if len(params) > 0 {
-		rs = rand.NewSource(params[0])
+	s := params.Seed()
+	if s > 0 {
+		rs = rand.NewSource(s)
 	} else {
 		rs = rand.NewSource(time.Now().UnixNano())
 	}
